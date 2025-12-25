@@ -1,9 +1,20 @@
+import { useState } from 'react';
+import { Dashboard } from '@/components/layout/Dashboard';
+import { SmoothScroll } from '@/components/layout/SmoothScroll';
+import { LandingPage } from '@/components/layout/LandingPage';
+
 export function App() {
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="font-medium">Hello World</div>
-    </div>
-  )
+    const [showDashboard, setShowDashboard] = useState(false);
+
+    return (
+        <SmoothScroll>
+            {showDashboard ? (
+                <Dashboard />
+            ) : (
+                <LandingPage onGetStarted={() => setShowDashboard(true)} />
+            )}
+        </SmoothScroll>
+    );
 }
 
-export default App
+export default App;
