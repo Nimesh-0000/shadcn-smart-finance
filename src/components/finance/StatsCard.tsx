@@ -1,6 +1,7 @@
 import { formatCurrency } from '@/lib/finance-utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface StatsCardProps {
     title: string;
@@ -10,48 +11,54 @@ interface StatsCardProps {
 }
 
 export function StatsCard({ title, amount, icon, variant = 'balance' }: StatsCardProps) {
-    const getVariantStyles = () => {
-        if (variant === 'balance' && amount < 0) {
-            return 'border-destructive/30 bg-destructive/5';
-        }
+    const isNegative = amount < 0;
 
+    const getColors = () => {
         switch (variant) {
             case 'income':
-                return 'border-chart-4/30 bg-chart-4/5';
+                return {
+                    text: 'text-emerald-500',
+                    border: 'border-emerald-500',
+                    icon: 'text-emerald-500'
+                };
             case 'expense':
-                return 'border-destructive/30 bg-destructive/5';
+                return {
+                    text: 'text-rose-500',
+                    border: 'border-rose-500',
+                    icon: 'text-rose-500'
+                };
             default:
-                return 'border-primary/30 bg-primary/5';
+                return {
+                    text: isNegative ? 'text-rose-500' : 'text-blue-500',
+                    border: isNegative ? 'border-rose-500' : 'border-blue-500',
+                    icon: isNegative ? 'text-rose-500' : 'text-blue-500'
+                };
         }
     };
 
-    const getBadgeVariant = () => {
-        if (variant === 'income') return 'default';
-        if (variant === 'expense') return 'destructive';
-        return amount >= 0 ? 'default' : 'destructive';
-    };
+    const colors = getColors();
 
     return (
-        <Card className={`glass-effect border-white/10 transition-all hover:scale-[1.02] hover:shadow-2xl hover:border-white/20 group ${getVariantStyles()}`}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">{title}</CardTitle>
-                <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                    {icon}
+        <Card className="gcp-card relative bg-card overflow-hidden">
+            <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                    <span className="text-[13px] font-medium text-[#5f6368]">{title}</span>
+                    <span className="text-lg">{icon}</span>
                 </div>
-            </CardHeader>
-            <CardContent>
-                <div className="flex items-baseline gap-2">
-                    <div className={`text-3xl font-black tracking-tighter ${variant === 'balance' && amount < 0 ? 'text-destructive' : 'text-foreground'}`}>
+
+                <div className="space-y-1">
+                    <h3 className="text-2xl font-semibold text-[#202124] dark:text-foreground">
                         {formatCurrency(amount)}
+                    </h3>
+                    <div className={cn("flex items-center gap-1.5 text-[12px] font-medium", colors.text)}>
+                        {variant === 'income' ? <TrendingUp className="h-3.5 w-3.5" /> : variant === 'expense' ? <TrendingDown className="h-3.5 w-3.5" /> : <Minus className="h-3.5 w-3.5" />}
+                        <span>{variant === 'income' ? '+12.5% last month' : variant === 'expense' ? '+8.2% last month' : 'Stable'}</span>
                     </div>
-                    <Badge variant={getBadgeVariant()} className="text-[10px] font-bold px-1.5 h-4 min-w-4 flex items-center justify-center rounded-full">
-                        {variant === 'income' ? '↑' : variant === 'expense' ? '↓' : amount >= 0 ? '✓' : '!'}
-                    </Badge>
                 </div>
-                <div className="mt-2 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                    <div className={`h-full w-2/3 opacity-50 ${variant === 'income' ? 'bg-chart-4' : variant === 'expense' ? 'bg-destructive' : 'bg-primary'}`} />
-                </div>
-            </CardContent>
+            </div>
+
+            {/* Subdued GCP indicator */}
+            <div className={cn("absolute left-0 top-0 bottom-0 w-[4px]", variant === 'income' ? "bg-emerald-500" : variant === 'expense' ? "bg-rose-500" : "bg-blue-500")} />
         </Card>
     );
 }

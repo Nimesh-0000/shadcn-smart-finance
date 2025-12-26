@@ -1,39 +1,78 @@
+import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, BarChart3, ShieldCheck, Zap } from 'lucide-react';
 import GradientBlinds from '@/components/GradientBlinds';
 import { useTheme } from '@/hooks/useTheme';
+import { FeatureCard } from './FeatureCard';
+import { useState } from 'react';
 
 interface LandingPageProps {
     onGetStarted: () => void;
 }
 
 export function LandingPage({ onGetStarted }: LandingPageProps) {
-    const { theme } = useTheme();
+    const { theme, setTheme } = useTheme();
+    const heroRef = useRef<HTMLElement>(null);
 
-    const lightColors = ['#f0f9ff', '#e0f2fe', '#f0fdf4', '#ffffff'];
-    const darkColors = ['#001f3f', '#004080', '#00d084', '#000000'];
+    const [prefersReducedMotion] = useState(() =>
+        typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false
+    );
+
+    const [isMobile] = useState(() =>
+        typeof window !== 'undefined' ? window.innerWidth < 768 : false
+    );
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setTheme('dark');
+                } else {
+                    setTheme('light');
+                }
+            },
+            {
+                threshold: 0.1, // Trigger when 10% of hero is visible
+            }
+        );
+
+        if (heroRef.current) {
+            observer.observe(heroRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, [setTheme]);
+
+    const lightColors = ['#e0f2fe', '#f0fdf4', '#fafafa', '#ffffff'];
+    const darkColors = ['#001428', '#003264', '#00bd78', '#020617'];
     const currentColors = theme === 'dark' ? darkColors : lightColors;
 
     return (
         <div className="min-h-screen bg-background relative">
 
             {/* Hero Section */}
-            <section className="relative w-full min-h-[75vh] flex items-center" data-scroll-section>
+            <section
+                ref={heroRef}
+                className="relative w-full min-h-[75vh] flex items-center"
+                data-scroll-section
+            >
                 {/* Dynamic Background Restricted to Hero with Seamless Fade */}
-                <div className="absolute inset-0 -z-10 overflow-hidden opacity-70">
+                <div className="absolute inset-0 -z-10 overflow-hidden opacity-100">
                     <GradientBlinds
                         gradientColors={currentColors}
-                        angle={45}
-                        noise={0.02}
-                        blindCount={12}
-                        mouseDampening={0.05}
-                        spotlightOpacity={theme === 'dark' ? 0.5 : 0.3}
+                        angle={20}
+                        noise={0.15}
+                        blindCount={isMobile ? 8 : 16}
+                        blindMinWidth={60}
+                        mouseDampening={0.15}
+                        distortAmount={5}
+                        paused={prefersReducedMotion}
+                        spotlightOpacity={theme === 'dark' ? 0.6 : 0.4}
                         mixBlendMode={theme === 'dark' ? 'screen' : 'multiply'}
                     />
                     {/* Seamless Fade Mask */}
-                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+                    <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none" />
                 </div>
 
                 <div className="container mx-auto px-4 py-20">
@@ -75,19 +114,25 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <FeatureCard
-                        icon={<Zap className="h-6 w-6 text-yellow-500" />}
+                        icon={<Zap className="h-7 w-7 text-amber-400" />}
                         title="Instant Tracking"
                         description="Log your income and expenses in seconds. Category-based tagging keeps everything organized."
+                        glowColor="#f59e0b"
+                        delay="0"
                     />
                     <FeatureCard
-                        icon={<BarChart3 className="h-6 w-6 text-primary" />}
+                        icon={<BarChart3 className="h-7 w-7 text-blue-400" />}
                         title="Visual Insights"
                         description="Beautifully crafted charts and analytics help you visualize where your money goes every month."
+                        glowColor="#3b82f6"
+                        delay="150"
                     />
                     <FeatureCard
-                        icon={<ShieldCheck className="h-6 w-6 text-emerald-500" />}
+                        icon={<ShieldCheck className="h-7 w-7 text-emerald-400" />}
                         title="Secure & Private"
                         description="Your data is stored locally on your device. We never see your financial information."
+                        glowColor="#10b981"
+                        delay="300"
                     />
                 </div>
             </section>
@@ -122,21 +167,5 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 <p>© 2025 Smart Finance Inc. All rights reserved.</p>
             </footer>
         </div>
-    );
-}
-
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
-    return (
-        <Card className="glass-effect border-white/10 hover:border-primary/50 transition-colors group cursor-default h-full">
-            <CardContent className="p-8 space-y-4">
-                <div className="h-12 w-12 rounded-2xl bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    {icon}
-                </div>
-                <h3 className="text-xl font-bold">{title}</h3>
-                <p className="text-muted-foreground leading-relaxed italic border-l-2 border-primary/20 pl-4">
-                    "{description}"
-                </p>
-            </CardContent>
-        </Card>
     );
 }
