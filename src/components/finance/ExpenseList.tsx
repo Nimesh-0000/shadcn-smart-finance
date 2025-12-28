@@ -30,11 +30,11 @@ export function ExpenseList({ expenses, onEdit, onDelete }: ExpenseListProps) {
     return (
         <div className="space-y-4">
             {/* Table Header - GCP Style */}
-            <div className="hidden md:grid grid-cols-[1fr_120px_100px_120px] gap-4 px-6 py-3 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/60 border-b border-border/40">
+            <div className="hidden md:grid grid-cols-[1fr_120px_100px_120px] gap-3 px-4 py-2 text-[10px] font-medium uppercase tracking-wider text-[#5f6368] border-b border-border/40">
                 <div>Description & Date</div>
                 <div>Category</div>
                 <div>Amount</div>
-                <div className="text-right">Actions</div>
+                <div className="text-right pr-4">Actions</div>
             </div>
 
             <div className="space-y-2">

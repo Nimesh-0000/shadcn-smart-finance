@@ -33,8 +33,8 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
     return (
         <aside
             className={cn(
-                "relative flex flex-col bg-sidebar border-r border-sidebar-border transition-all duration-300 ease-in-out z-40 group h-full",
-                isOpen ? "w-56" : "w-10"
+                "absolute top-0 left-0 flex flex-col bg-sidebar border-r border-sidebar-border h-full transition-all duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)] will-change-[width,transform,box-shadow] z-50",
+                isOpen ? "w-56 shadow-[0_8px_10px_-5px_rgba(0,0,0,0.2),0_16px_24px_2px_rgba(0,0,0,0.14),0_6px_30px_5px_rgba(0,0,0,0.12)]" : "w-10 shadow-none"
             )}
         >
             {/* Logo Section - GCP Console Style with Hamburger */}

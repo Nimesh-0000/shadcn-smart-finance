@@ -74,3 +74,34 @@ export function getBudgetStatus(budget: Budget, expenses: Expense[]): {
 export function generateId(): string {
     return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
+
+export function getDateRangeForScope(scope: string): { start: string, end: string } {
+    const now = new Date();
+    let start = new Date(now);
+    let end = new Date(now);
+
+    switch (scope) {
+        case 'today':
+            // start and end are already 'now'
+            break;
+        case 'mtd':
+            start.setDate(1);
+            break;
+        case 'qtd':
+            const month = now.getMonth();
+            const quarterStartMonth = Math.floor(month / 3) * 3;
+            start.setMonth(quarterStartMonth);
+            start.setDate(1);
+            break;
+        default:
+            // Default to MTD if unknown
+            start.setDate(1);
+    }
+
+    // Format as YYYY-MM-DD
+    const formatDate = (date: Date) => date.toISOString().split('T')[0];
+    return {
+        start: formatDate(start),
+        end: formatDate(end)
+    };
+}

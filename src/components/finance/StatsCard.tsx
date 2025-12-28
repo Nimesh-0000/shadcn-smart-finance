@@ -40,18 +40,18 @@ export function StatsCard({ title, amount, icon, variant = 'balance' }: StatsCar
 
     return (
         <Card className="gcp-card relative bg-card overflow-hidden">
-            <div className="space-y-4">
+            <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                    <span className="text-[13px] font-medium text-[#5f6368]">{title}</span>
-                    <span className="text-lg">{icon}</span>
+                    <span className="text-[12px] font-medium text-[#5f6368]">{title}</span>
+                    <span className="text-base">{icon}</span>
                 </div>
 
-                <div className="space-y-1">
-                    <h3 className="text-2xl font-semibold text-[#202124] dark:text-foreground">
+                <div className="space-y-0.5">
+                    <h3 className="text-xl font-semibold text-[#202124] dark:text-foreground">
                         {formatCurrency(amount)}
                     </h3>
-                    <div className={cn("flex items-center gap-1.5 text-[12px] font-medium", colors.text)}>
-                        {variant === 'income' ? <TrendingUp className="h-3.5 w-3.5" /> : variant === 'expense' ? <TrendingDown className="h-3.5 w-3.5" /> : <Minus className="h-3.5 w-3.5" />}
+                    <div className={cn("flex items-center gap-1.5 text-[11px] font-medium", colors.text)}>
+                        {variant === 'income' ? <TrendingUp className="h-3 w-3" /> : variant === 'expense' ? <TrendingDown className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
                         <span>{variant === 'income' ? '+12.5% last month' : variant === 'expense' ? '+8.2% last month' : 'Stable'}</span>
                     </div>
                 </div>
